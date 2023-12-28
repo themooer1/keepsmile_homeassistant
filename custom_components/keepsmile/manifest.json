@@ -52,6 +52,6 @@
   "integration_type": "device",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/themooer1/keepsmile_homeassistant/issues",
-  "requirements": ["bluetooth-data-tools==1.7.0", "bleak-retry-connector>=1.17.1","bleak>=0.17.0", "cheshire>=0.5.6"],
+  "requirements": ["bluetooth-data-tools", "bleak-retry-connector>=1.17.1","bleak>=0.17.0", "cheshire>=0.5.6"],
   "version": "0.0.2"
 }
