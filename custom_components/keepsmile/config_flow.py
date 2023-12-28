@@ -28,7 +28,8 @@ class DeviceData(BluetoothData):
         LOGGER.debug("Discovered bluetooth devices, DeviceData, : %s , %s", self._discovery.address, self._discovery.name)
 
     def supported(self):
-        return self._discovery.name.lower().startswith("bj_led")
+        return True
+        return self._discovery.name.startswith("KS0")
 
     def address(self):
         return self._discovery.address
@@ -63,6 +64,7 @@ class BJLEDFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self, discovery_info: BluetoothServiceInfoBleak
     ) -> FlowResult:
         """Handle the bluetooth discovery step."""
+        print("step_bt")
         LOGGER.debug("Discovered bluetooth devices, step bluetooth, : %s , %s", discovery_info.address, discovery_info.name)
         await self.async_set_unique_id(discovery_info.address)
         self._abort_if_unique_id_configured()
@@ -78,6 +80,7 @@ class BJLEDFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Confirm discovery."""
+        print("step_bt_confirm")
         LOGGER.debug("Discovered bluetooth devices, step bluetooth confirm, : %s", user_input)
         self._set_confirm_only()
         return await self.async_step_user()
@@ -86,9 +89,13 @@ class BJLEDFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Handle the user step to pick discovered device."""
-        if user_input is not None:
+        print("step_user")
+        if user_input is not None and "title_placeholders" in self.context:
             self.mac = user_input[CONF_MAC]
-            self.name = self.context["title_placeholders"]["name"]
+            try:
+                self.name = self.context["title_placeholders"]["name"]
+            except KeyError:
+                self.name = f"KS-{self.mac}"
             await self.async_set_unique_id(self.mac, raise_on_progress=False)
             self._abort_if_unique_id_configured()
             return await self.async_step_validate()
@@ -121,6 +128,7 @@ class BJLEDFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors={})
 
     async def async_step_validate(self, user_input: "dict[str, Any] | None" = None):
+        print("step_validate")
         if user_input is not None:
             if "flicker" in user_input:
                 if user_input["flicker"]:
@@ -133,6 +141,7 @@ class BJLEDFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         error = await self.toggle_light()
 
         if error:
+            print(error.with_traceback())
             return self.async_show_form(
                 step_id="validate", data_schema=vol.Schema(
                     {
@@ -148,6 +157,7 @@ class BJLEDFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             ), errors={})
 
     async def async_step_manual(self, user_input: "dict[str, Any] | None" = None):
+        print("step_manual")
         if user_input is not None:            
             self.mac = user_input[CONF_MAC]
             self.name = user_input["name"]
@@ -168,14 +178,15 @@ class BJLEDFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         try:
             await self._instance.update()
             await self._instance.turn_on()
+            await self._instance.set_rgb_color(rgb=(0, 150, 0), brightness=254)
             await asyncio.sleep(1)
             await self._instance.turn_off()
             await asyncio.sleep(1)
             await self._instance.turn_on()
             await asyncio.sleep(1)
             await self._instance.turn_off()
-        except (Exception) as error:
-            return error
+        # except (Exception) as error:
+        #     return error
         finally:
             await self._instance.stop()
 

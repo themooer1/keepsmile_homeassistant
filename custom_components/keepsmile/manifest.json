@@ -1,0 +1,57 @@
+{
+  "bluetooth": [
+    {
+      "local_name": "KS01-*"
+    },
+    {
+      "local_name": "KS02-*"
+    },
+    {
+      "local_name": "KS03-*"
+    },
+    {
+      "local_name": "KS03~*"
+    },
+    {
+      "local_name": "KS04-*"
+    },
+    {
+      "local_name": "KS04~*"
+    },
+    {
+      "local_name": "KS05-*"
+    },
+    {
+      "local_name": "KS07-*"
+    },
+    {
+      "local_name": "KS08-*"
+    },
+    {
+      "local_name": "KS09-*"
+    },
+    {
+      "local_name": "KS10-*"
+    },
+    {
+      "local_name": "KS11-*"
+    },
+    {
+      "local_name": "KS12-*"
+    },
+    {
+      "local_name": "KS13-*"
+    }
+  ],
+  "domain": "keepsmile",
+  "name": "Keepsmile",
+  "codeowners": ["@themooer1"],
+  "config_flow": true,
+  "dependencies": ["bluetooth_adapters"],
+  "documentation": "https://github.com/themooer1/keepsmile_homeassistant",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/themooer1/keepsmile_homeassistant/issues",
+  "requirements": ["bluetooth-data-tools==1.7.0", "bleak-retry-connector>=1.17.1","bleak>=0.17.0", "cheshire>=0.5.6"],
+  "version": "0.0.2"
+}
